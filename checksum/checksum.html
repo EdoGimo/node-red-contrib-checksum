@@ -1,0 +1,48 @@
+<script type="text/javascript">
+    RED.nodes.registerType('checksum',{
+        category: 'function',
+        color: '#ff8d47',
+        defaults: {
+            name: {value:""},
+            hashFunc: {value:""},
+            isFile: {value:false},
+        },
+        inputs:1,
+        outputs:1,
+        icon: "font-awesome/fa-bars",
+        label: function() {
+            return this.name||"checksum";
+        },
+        inputLabels: "'payload' and 'checksum' properties",
+        outputLabels: "Process result"
+    });
+</script>
+
+<script type="text/html" data-template-name="checksum">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-hashFunc"><i class="fa fa-hashtag"></i> Hash function</label>
+        <select id="node-input-hashFunc">
+            <option value="sha256">SHA-256</option>
+            <option value="sha1">SHA-1</option>
+            <option value="md5">MD5</option>
+            <option value="sha512">SHA-512</option>
+            <option value="sha224">SHA-224</option>
+            <option value="sha384">SHA-384</option>
+            <option value="sha3">SHA-3 (512 bits)</option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-isFile">&nbsp;</label>            
+        <input type="checkbox" id="node-input-isFile" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-isFile" style="width: auto"><i class="fa fa-file-o" style="transform: scaleX(-1);"></i> The input payload is a file</label>
+    </div>
+
+</script>
+
+<script type="text/html" data-help-name="checksum">
+    <p>Something</p>
+</script>
