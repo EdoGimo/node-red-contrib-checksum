@@ -1,7 +1,7 @@
 {
 	"name": "node-red-contrib-checksum",
-	"version": "1.0.2",
-	"description": "Calculates the checksum of the payload (using crypto-js) and compares it with the one given to it (msg.checksum). \n Returns a boolean if the checksum is correct (true) or wrong (false). Returns a string if one of the two properties is missing.\n Supports the elaboration of strings or files.",
+	"version": "1.0.3",
+	"description": "Calculates, using crypto-js, the checksum of the payload (string or file) and compares it with the one provided (in msg.checksum). Returns a boolean if the checksum is correct (true) or wrong (false). Returns a string if one of the two properties is missing.",
     "dependencies": {
 		"crypto-js":"4.0.0"
 	},
