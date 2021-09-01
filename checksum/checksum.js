@@ -49,7 +49,7 @@ module.exports = function(RED) {
 
             //MAIN code
             var HASH;
-            var sha3 = node.hashFunc.startsWith("sha3_");
+            var sha3 = node.hashFunc.startsWith("sha3_");   //SHA-3 is actually Keccak in the module!!!
 
             if(sha3){
                 HASH = require("crypto-js/sha3");
@@ -58,7 +58,6 @@ module.exports = function(RED) {
             }
 
             var hashInput;
-            var hashChecksum;
 
             //if payload is a file
             if (node.isFile){
@@ -86,9 +85,10 @@ module.exports = function(RED) {
 
             //hashing (outputLength specified in case of sha3)
             var cs;
+            var bits;
 
             if(sha3){
-                var bits = Integer. parseInt( (node.hashFunc.split("_"))[1] );
+                bits = parseInt( ((node.hashFunc).split("_"))[1] );
 
                 cs = HASH(hashInput, { outputLength: bits }).toString();
 
@@ -96,6 +96,8 @@ module.exports = function(RED) {
                 cs = HASH(hashInput).toString();
             }
 
+            var hashChecksum;
+            
             //if checksum is a file
             if (node.isFileChecksum){
 

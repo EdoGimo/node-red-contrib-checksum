@@ -1,6 +1,6 @@
 # node-red-contrib-checksum
 
-A simple checksum utility for [Node-RED](https://nodered.org/), based on [crypto-js](https://www.npmjs.com/package/crypto-js). Supports sha256, sha1, MD5, SHA-512, SHA-224, SHA-384, SHA-3 (at 512, 384, 256 or 224 bits, although autor of the module says it is actually 'Keccak\[c=2d\]') and RIPEMD-160.
+A simple checksum utility for [Node-RED](https://nodered.org/), based on [crypto-js](https://www.npmjs.com/package/crypto-js). Supports MD5, SHA-1, SHA-512, SHA-384, SHA-256, SHA-224, Keccak (at 512, 384, 256 or 224 bits) and RIPEMD-160.
 
 
 ### Prerequisites
