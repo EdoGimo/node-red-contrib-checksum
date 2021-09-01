@@ -1,15 +1,15 @@
 {
 	"name": "node-red-contrib-checksum",
-	"version": "1.1.0",
-	"description": "Calculates, using crypto-js, the checksum of the payload (string or file) and compares it with the one provided (in msg.checksum). Returns a boolean if the checksum is correct (true) or wrong (false).",
+	"version": "1.2.0",
+	"description": "Calculates, using crypto-js, the checksum of a given string or file and compares it with the hash provided. Returns a boolean if the checksum is correct (true) or wrong (false).",
     "dependencies": {
-		"crypto-js":"4.0.0"
+		"crypto-js":"4.1.1"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/edogimo/node-red-contrib-checksum.git"
 	  },
-	"keywords": ["node-red", "checksum", "crypto-js", "sha256", "sha1", "md5", "sha3", "ripemd160"],
+	"keywords": ["node-red", "checksum", "crypto-js", "sha512", "sha256", "sha1", "md5", "keccak", "ripemd160"],
 	"node-red": {
 		"nodes": {
 			"Checksum":"checksum/checksum.js"
