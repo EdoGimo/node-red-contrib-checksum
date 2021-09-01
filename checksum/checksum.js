@@ -4,6 +4,10 @@ module.exports = function(RED) {
 
         //options
         this.hashFunc = config.hashFunc;
+        this.file = config.file;
+        this.fileType = config.fileType;
+        this.checksum = config.checksum;
+        this.checksumType = config.checksumType;
         this.isFile = config.isFile;
         this.isFileChecksum = config.isFileChecksum;
 
@@ -16,79 +20,111 @@ module.exports = function(RED) {
                 return null;
             }
 
-            //close if parameters are missing
-            if (!msg.checksum || !msg.payload){
-                node.warn("Missing parameters (payload or checksum)!");
-                return null;
+            var fileField;
+            var checksumField;
 
-            
-            //regular execution
+            //get the actual value of FILE and CHECKSUM if msg was selected
+            if(node.fileType == "msg"){
+                fileField = RED.util.getMessageProperty(msg,node.file);
             }else{
-
-                var HASH = require("crypto-js/" + node.hashFunc);
-
-                var hashInput;
-                var hashChecksum;
-
-                //if payload is a file
-                if (node.isFile){
-
-                    var fs = require("fs");
-
-                    try {
-                        hashInput = fs.readFileSync(msg.payload).toString();
-
-                    } catch (err) {
-                        if (err.code === 'ENOENT'){
-                            node.warn("File not found! Check the path provided.");
-                            return null;
-                        } else{
-                            throw err;
-                        }
-                    }
-
-                //if payload is a string
-                } else {
-
-                    hashInput = msg.payload;
-                }
-
-                //hashing
-                cs = HASH(hashInput).toString();
-
-                //if checksum is a file
-                if (node.isFileChecksum){
-
-                    var fs = require("fs");
-
-                    try {
-                        hashChecksum = fs.readFileSync(msg.checksum).toString();
-
-                    } catch (err) {
-                        if (err.code === 'ENOENT'){
-                            node.warn("Checksum file not found! Check the path provided.");
-                            return null;
-                        } else{
-                            throw err;
-                        }
-                    }
-
-                //if checksum is a string
-                } else {
-
-                    hashChecksum = msg.checksum;
-                }
-
-                if (cs === hashChecksum) {
-                    msg.payload = true;
-                }
-                else {
-                    msg.payload = false;
-                }
+                fileField = node.file;
+            }
+            if(node.checksumType == "msg"){
+                checksumField = RED.util.getMessageProperty(msg,node.checksum);
+            }else{
+                checksumField = node.checksum;
             }
 
-            //remove 'checksum' property from msg
-            msg.checksum = null;
+            //close if parameters are missing
+            if (!fileField){
+                node.warn("Message/File field has not been specified, or the msg is empty!");
+                return null;
+            }
+
+            if (!checksumField){
+                node.warn("Checksum field has not been specified, or the msg is empty!");
+                return null;
+            }
+
+
+            //MAIN code
+            var HASH;
+            var sha3 = node.hashFunc.startsWith("sha3_");
+
+            if(sha3){
+                HASH = require("crypto-js/sha3");
+            } else {
+                HASH = require("crypto-js/" + node.hashFunc);
+            }
+
+            var hashInput;
+            var hashChecksum;
+
+            //if payload is a file
+            if (node.isFile){
+
+                var fs = require("fs");
+
+                try {
+                    hashInput = fs.readFileSync(fileField).toString();
+
+                } catch (err) {
+                    if (err.code === 'ENOENT'){
+                        node.warn("File not found! Check the path provided.");
+                        return null;
+                    } else{
+                        throw err;
+                    }
+                }
+
+            //if payload is a string
+            } else {
+
+                hashInput = fileField;
+            }
+
+
+            //hashing (outputLength specified in case of sha3)
+            var cs;
+
+            if(sha3){
+                var bits = Integer. parseInt( (node.hashFunc.split("_"))[1] );
+
+                cs = HASH(hashInput, { outputLength: bits }).toString();
+
+            } else {
+                cs = HASH(hashInput).toString();
+            }
+
+            //if checksum is a file
+            if (node.isFileChecksum){
+
+                var fs = require("fs");
+
+                try {
+                    hashChecksum = fs.readFileSync(checksumField).toString();
+
+                } catch (err) {
+                    if (err.code === 'ENOENT'){
+                        node.warn("Checksum file not found! Check the path provided.");
+                        return null;
+                    } else{
+                        throw err;
+                    }
+                }
+
+            //if checksum is a string
+            } else {
+
+                hashChecksum = checksumField;
+            }
+
+            if (cs === hashChecksum) {
+                msg.payload = true;
+            }
+            else {
+                msg.payload = false;
+            }
 
             node.send(msg);
         });

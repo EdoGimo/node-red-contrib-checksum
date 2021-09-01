@@ -1,6 +1,6 @@
 # node-red-contrib-checksum
 
-A simple checksum utility for [Node-RED](https://nodered.org/), based on [crypto-js](https://www.npmjs.com/package/crypto-js).
+A simple checksum utility for [Node-RED](https://nodered.org/), based on [crypto-js](https://www.npmjs.com/package/crypto-js). Supports sha256, sha1, MD5, SHA-512, SHA-224, SHA-384, SHA-3 (at 512, 384, 256 or 224 bits, although autor of the module says it is actually 'Keccak\[c=2d\]') and RIPEMD-160.
 
 
 ### Prerequisites
@@ -28,12 +28,14 @@ If necessary, restart Node-RED.
 
 ### How to use
 
-The node must get as input a *msg* object, containing both the 'payload' (string, or path to the file, to be hashed) and 'checksum' (the checksum as a string) properties.
+There are 5 options in the Properties tab of the node:
+- File/String: string, or path to the file, to be hashed;
+- Checksum: hash string, or path to the file with it, to compare with the hashing result;
+- Hash function: allows to choose the necessary function between those supported;
+- The input payload is a file: specifies if 'File/String' contains a string to be passed directly to the function or a path to a file that has to be read first;
+- The input checksum is a file: specifies if 'Checksum' contains a string to be passed directly to the function or a path to a file containing the hash.
 
-There are 3 options in the Properties tab of the node:
-- Hash function: allows to choose the necessary function between those supported.
-- The input payload is a file: specifies if 'payload' contains a string to be passed directly to the function or a path to a file that has to be read first.
-- The input checksum is a file: specifies if 'checksum' contains a string to be passed directly to the function or a path to a file containing the hash.
+The first 2 fields can be specified using strings or specific msg attributes.
 
 The node returns a boolean if everything works correctly: true if the checksum given matches the one obtained from the hash function, false otherwise. 
 
