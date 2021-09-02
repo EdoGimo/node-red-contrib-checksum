@@ -8,7 +8,8 @@
             fileType: { value:"str"},
             checksum: {value:"", validate: RED.validators.typedInput("checksumType"), required: true},
             checksumType: { value:"str"},
-            hashFunc: {value:"", required: true},
+            hashFunction: { value: "", validate: RED.validators.typedInput("hashFunctionType"), required: true},
+            hashFunctionType: { value: "select"},
             isFile: {value:false},
             isFileChecksum: {value:false}
         },
@@ -30,13 +31,30 @@
                 types:["str", "msg"],
                 typeField: $("#node-input-checksumType")
             });
+
+            $("#node-input-hashFunction").typedInput({
+                default: this.hashFunctionType || "select",
+                types: [ { value: 'select', label: 'Functions', options: [ 
+                    { value: 'md5', label: 'MD5', }, 
+                    { value: 'sha1', label: 'SHA-1' },
+                    { value: 'sha512', label: 'SHA-512'},
+                    { value: 'sha384', label: 'SHA-384'},
+                    { value: 'sha256', label: 'SHA-256'},
+                    { value: 'sha224', label: 'SHA-224'},
+                    { value: 'sha3_512', label: 'Keccak-512'},
+                    { value: 'sha3_384', label: 'Keccak-384'},
+                    { value: 'sha3_256', label: 'Keccak-256'},
+                    { value: 'sha3_224', label: 'Keccak-224'},
+                    { value: 'ripemd160', label: 'RIPEMD-160'} ] }, 
+                    'msg' ],
+                typeField: $("#node-input-hashFunctionType")
+            });
         },
         onsave: function(){
             this.fileType = $("#node-input-fileType").val();
             this.checksumType = $("#node-input-checksumType").val();
-        },
-        inputLabels: "'payload' and 'checksum' properties",
-        outputLabels: "Process result"
+            this.hashFunctionType = $("#node-input-hashFunctionType").val();
+        }
     });
 </script>
 
@@ -61,22 +79,13 @@
     </div>
 
     <div class="form-row">
-        <label for="node-input-hashFunc"><i class="fa fa-hashtag"></i> Hash function</label>
-        <select id="node-input-hashFunc">
-            <option value="md5">MD5</option>
-            <option value="sha1">SHA-1</option>
-            <option value="sha512">SHA-512</option>
-            <option value="sha384">SHA-384</option>
-            <option value="sha256">SHA-256</option>
-            <option value="sha224">SHA-224</option>
-            <option value="sha3_512">Keccak-512</option>
-            <option value="sha3_384">Keccak-384</option>
-            <option value="sha3_256">Keccak-256</option>
-            <option value="sha3_224">Keccak-224</option>
-            <option value="ripemd160">RIPEMD-160</option>
-        </select>
+        <label for="node-input-hashFunction"><i class="fa fa-hashtag"></i> <span> Hash function</span></label>
+        <input type="text" id="node-input-hashFunction">
+        <input type="hidden" id="node-input-hashFunctionType">
     </div>
+
     <hr>
+    
     <div class="form-row">
         <label for="node-input-isFile">&nbsp;</label>            
         <input type="checkbox" id="node-input-isFile" style="display: inline-block; width: auto; vertical-align: top;">
@@ -87,6 +96,7 @@
         <input type="checkbox" id="node-input-isFileChecksum" style="display: inline-block; width: auto; vertical-align: top;">
         <label for="node-input-isFileChecksum" style="width: auto"><i class="fa fa-file" style="transform: scaleX(-1);"></i> The input checksum is a file</label>
     </div>
+    &nbsp;
 
 </script>
 
@@ -99,7 +109,7 @@
     <li>The input payload is a file: specifies if &#39;payload&#39; contains a string to be passed directly to the function or a file that has to be read first.</li>
     <li>The input checksum is a file: specifies if &#39;checksum&#39; contains a string to be passed directly to the function or a file that has to be read first.</li>
     </ul>
-    <p>The first 2 fields can also be specified using msg attributes: e.g., to get the content of "msg.payload" write only "payload" after changing the type.</p>
+    <p>The first 3 fields can also be specified using msg attributes: e.g., to get the content of "msg.payload" write only "payload" after changing the type.</p>
     <p>The node returns a boolean if everything works correctly: &#39;true&#39; if the checksum given matches the one obtained from the hash function, &#39;false&#39; otherwise. </p>
     <hr>
     <p>An implementation example with files can be found in this <a href="https://flows.nodered.org/flow/33b68d640eac3e9a4a29441285a6f4ea">flow</a>.</p>

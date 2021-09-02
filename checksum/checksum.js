@@ -3,25 +3,21 @@ module.exports = function(RED) {
         RED.nodes.createNode(this,config);
 
         //options
-        this.hashFunc = config.hashFunc;
         this.file = config.file;
         this.fileType = config.fileType;
         this.checksum = config.checksum;
         this.checksumType = config.checksumType;
+        this.hashFunction = config.hashFunction;
+        this.hashFunctionType = config.hashFunctionType;
         this.isFile = config.isFile;
         this.isFileChecksum = config.isFileChecksum;
 
         var node = this;
         node.on('input', function(msg) {
 
-            //close if configuration was not set
-            if(!node.hashFunc){
-                node.warn("Edit the configuration first!");
-                return null;
-            }
-
             var fileField;
             var checksumField;
+            var hashFunctionField;
 
             //get the actual value of FILE and CHECKSUM if msg was selected
             if(node.fileType == "msg"){
@@ -33,6 +29,19 @@ module.exports = function(RED) {
                 checksumField = RED.util.getMessageProperty(msg,node.checksum);
             }else{
                 checksumField = node.checksum;
+            }
+
+            var functions = ['md5', 'sha1', 'sha512', 'sha384', 'sha256', 'sha224', 'sha3_512', 'sha3_384', 'sha3_256', 'sha3_224', 'ripemd160'];
+            if(node.hashFunctionType == "msg"){
+                hashFunctionField = RED.util.getMessageProperty(msg, node.hashFunction);
+
+                //control if hash function exists
+                if(typeof(hashFunctionField) != "string" || !(functions.includes(hashFunctionField)) ){
+                    node.warn("Something wrong with the hash function in the msg field (not supported or not a string)!");
+                    return null;
+                }
+            }else{
+                hashFunctionField = node.hashFunction;
             }
 
             //close if parameters are missing
@@ -49,12 +58,12 @@ module.exports = function(RED) {
 
             //MAIN code
             var HASH;
-            var sha3 = node.hashFunc.startsWith("sha3_");   //SHA-3 is actually Keccak in the module!!!
+            var sha3 = hashFunctionField.startsWith("sha3_");   //SHA-3 is actually Keccak in the module!!!
 
             if(sha3){
                 HASH = require("crypto-js/sha3");
             } else {
-                HASH = require("crypto-js/" + node.hashFunc);
+                HASH = require("crypto-js/" + hashFunctionField);
             }
 
             var hashInput;
@@ -88,7 +97,7 @@ module.exports = function(RED) {
             var bits;
 
             if(sha3){
-                bits = parseInt( ((node.hashFunc).split("_"))[1] );
+                bits = parseInt( ((hashFunctionField).split("_"))[1] );
 
                 cs = HASH(hashInput, { outputLength: bits }).toString();
 
