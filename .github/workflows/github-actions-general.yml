@@ -1,8 +1,5 @@
 name: Testing node
-on:
-  push:
-    paths:
-      - '**.md'
+on: [push]
 
 jobs:
   build:
