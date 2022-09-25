@@ -75,6 +75,37 @@ describe('Checksum node', function () {
         });
     });
 
+    //MD5 based on msg.calcChecksum
+    it('should return the correct md5 checksum', function (done) {
+        var flow = [
+            { id: "n1", type: "checksum", name: "checksum", 
+                fileType: "string", file: "string to test",
+                checksumType: "string", checksum: "wrongChecksum",
+                hashFunctionType: "select", hashFunction: "md5", 
+                isFile: false, isFileChecksum: false,
+                wires: [["n2"]] },
+            { id: "n2", type: "helper" }
+        ];
+
+        helper.load(requiredNodes, flow, function () {
+
+            var n1 = helper.getNode("n1");
+            var n2 = helper.getNode("n2");
+
+            n2.on("input", function (msg) {
+                try {
+                    msg.should.have.a.property("calcChecksum");
+                    msg.calcChecksum.toString().should.equal("0a5cb2b60d20b9c9458e0fabc0cb66f0");
+                    done();
+                } catch (err) {
+                    done(err);
+                }
+            });
+
+            n1.receive({});
+        });
+    });
+
     //SHA1
     it('should provide the correct SHA-1 checksum', function (done) {
         var flow = [

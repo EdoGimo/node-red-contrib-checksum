@@ -123,7 +123,6 @@ module.exports = function(RED) {
 
                 //if checksum is a string
                 } else {
-    
                     hashChecksum = checksumField;
                 }
     
@@ -133,6 +132,9 @@ module.exports = function(RED) {
                 else {
                     msg.payload = false;
                 }
+
+                //return the calculated checksum
+                msg.calcChecksum = cs;
 
                 send(msg);
                 done();

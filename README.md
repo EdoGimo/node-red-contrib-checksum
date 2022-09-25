@@ -37,7 +37,7 @@ There are 5 options in the Properties tab of the node:
 
 The first 3 fields can be specified using strings or the msg attributes containing the value. In case of the hash function, the value provided must be a string and one of the hash functions listed as supported.
 
-The node returns a boolean if everything works correctly: true if the checksum given matches the one obtained from the hash function, false otherwise. 
+The node returns a boolean if everything works correctly: true if the checksum given matches the one obtained from the hash function, false otherwise. In the "msg.calcChecksum" field is also returned the calculated checksum,regardless the result of the comparison.
 
 
 ### Examples
